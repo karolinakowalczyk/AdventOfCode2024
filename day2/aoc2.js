@@ -46,7 +46,6 @@ import { exampleData as data } from "./aoc2exampledata.js";
 
 // part 2
 
-let safeCount = 0;
 let myResArr = [];
 let hisResArr = [];
 
@@ -100,91 +99,249 @@ function sortElements(report, sortType) {
   return result;
 }
 
-data
-  .trim()
-  .split("\n")
-  .forEach((report) => {
-    let sortResult = "";
-    let singleBadLevel = 0;
-    //let differencesCounter = 0;
+// data
+//   .trim()
+//   .split("\n")
+//   .forEach((report) => {
+//     let sortResult = "";
+//     let singleBadLevel = 0;
+//     //let differencesCounter = 0;
 
+//     //find nearest not same element
+//     const nearestNotSameElement = report
+//       .trim()
+//       .split(" ")
+//       .find((num) => num !== report.trim().split(" ")[0]);
+
+//     if (
+//       parseInt(report.trim().split(" ")[0]) < parseInt(nearestNotSameElement)
+//     ) {
+//       sortResult = sortElements(report, 0);
+//     } else {
+//       sortResult = sortElements(report, 1);
+//     }
+
+//     // all increasing or all decreasing
+//     if (report !== sortResult) {
+//       console.log("report");
+//       console.log(report);
+//       console.log("sortResult");
+//       console.log(sortResult);
+//       singleBadLevel =
+//         report.split(" ").reduce((total, currValue, index) => {
+//           if (currValue !== sortResult.split(" ")[index]) {
+//             total += 1;
+//           }
+//           return total;
+//         }, 0) / 2;
+//       //   if (differencesCounter / 2 > 1) {
+//       //     return;
+//       //   } else {
+//       //     singleBadLevel += 1;
+//       //   }
+//     }
+
+//     const safeDistanceData = checkDistanceCondition(report);
+//     console.log("safeDistanceData");
+//     console.log(safeDistanceData);
+//     let firstElRemoved = false;
+
+//     if (safeDistanceData.safeDistance) {
+//       myResArr.push(report);
+//       safeCount += 1;
+//     } else if (
+//       !safeDistanceData.safeDistance &&
+//       safeDistanceData.conditionBufor.length === 1
+//     ) {
+//       const reportWithoutBadElement = report
+//         .split(" ")
+//         .filter((el) => {
+//           if (el === safeDistanceData.conditionBufor[0] && !firstElRemoved) {
+//             firstElRemoved = true;
+//             return false;
+//           }
+//           return true;
+//         })
+//         .join(" ");
+
+//       console.log("reportWithoutBadElement");
+//       console.log(reportWithoutBadElement);
+//       const newSafeDistanceData = checkDistanceCondition(
+//         reportWithoutBadElement
+//       );
+//       if (newSafeDistanceData.safeDistance && singleBadLevel === 0) {
+//         myResArr.push(report);
+//         safeCount += 1;
+//       } else {
+//         //case gdzie - mamy bad level, bo posortowane różni się od nieposortowanego
+//         console.log("else");
+//         console.log(report);
+//       }
+//     } else {
+//       return;
+//     }
+//   });
+
+function verifyConditions(report, safeCount, badSorting, badDistance, areConditionsFullfilled){
+    console.log('report')
+    console.log(report)
+    console.log('safecount')
+    console.log(safeCount)
+    console.log('badSorting')
+    console.log(badSorting)
+    console.log('badDistance')
+    console.log(badDistance)
+    console.log('areConditionsFullfilled')
+    console.log(areConditionsFullfilled)
+    let sortResult = '';
+    let excludeElement = null;
     //find nearest not same element
     const nearestNotSameElement = report
-      .trim()
-      .split(" ")
-      .find((num) => num !== report.trim().split(" ")[0]);
+    .trim()
+    .split(" ")
+    .find((num) => num !== report.trim().split(" ")[0]);
 
     if (
-      parseInt(report.trim().split(" ")[0]) < parseInt(nearestNotSameElement)
-    ) {
-      sortResult = sortElements(report, 0);
-    } else {
-      sortResult = sortElements(report, 1);
+              parseInt(report.trim().split(" ")[0]) < parseInt(nearestNotSameElement)
+            ) {
+              sortResult = sortElements(report, 0);
+            } else {
+              sortResult = sortElements(report, 1);
+            }
+
+   // all increasing or all decreasing
+    if(report !== sortResult){
+      
+        // if(!badSorting && badDistance){
+        //     badSorting = true
+        //     const res = verifyConditions(report, safeCount, badSorting, badDistance)
+        //     safeCount = res
+        // }
+        // if(badSorting && !badDistance){
+        //     badSorting = true
+        //     const res = verifyConditions(report, safeCount, badSorting, badDistance)
+        //     safeCount = res
+        // }
+        // if(badSorting && !badDistance){
+        //     badSorting = true
+        //     const res = verifyConditions(report, safeCount, badSorting, badDistance)
+        //     safeCount = res
+        // }
+        if(!badSorting === 0) {
+            console.log('badsorting')
+            badSorting += 1;
+            //get element with is different and remove it
+            const reportArr = report.split(" ")
+            excludeElement = reportArr.find((element, index) => element !== sortResult.split(" ")[index]);
+            const excludeElementIndex = reportArr.indexOf(excludeElement);
+            if(excludeElementIndex > -1){
+                reportArr.splice(excludeElementIndex, 1)
+                verifyConditions(reportArr.join(' '), safeCount, badSorting, badDistance, areConditionsFullfilled)
+            }
+
+            
+            // const res = verifyConditions(report, safeCount, badSorting, badDistance)
+            // safeCount = res
+        }
+        else{
+          badSorting += 1;
+          //return 0;
+        }
+      
     }
 
-    // all increasing or all decreasing
-    if (report !== sortResult) {
-      console.log("report");
-      console.log(report);
-      console.log("sortResult");
-      console.log(sortResult);
-      singleBadLevel =
-        report.split(" ").reduce((total, currValue, index) => {
-          if (currValue !== sortResult.split(" ")[index]) {
-            total += 1;
+    let iterator = 1
+    const reportLength =  report.trim().split(' ').length
+
+    const safeDistance =  report.trim().split(' ').every((num)=>{
+        if(iterator === reportLength){
+            return true
+        }
+
+        const condition =  Math.abs(num - report.trim().split(" ")[iterator]) > 0 && (Math.abs(num - report.trim().split(' ')[iterator])) < 4
+
+        iterator +=1
+
+        if (!condition) {
+            excludeElement = num
           }
-          return total;
-        }, 0) / 2;
-      //   if (differencesCounter / 2 > 1) {
-      //     return;
-      //   } else {
-      //     singleBadLevel += 1;
-      //   }
+
+        return condition
+    })
+
+    if(!safeDistance){
+        console.log('!SAFEDISTANCE')
+        if(badDistance === 0){
+          badDistance +=1
+            const reportArr = report.split(" ")
+            const excludeElementIndex = reportArr.indexOf(excludeElement);
+            if(excludeElementIndex > -1){
+                reportArr.splice(excludeElementIndex, 1)
+                verifyConditions(reportArr.join(' '), safeCount, badSorting, badDistance, areConditionsFullfilled)
+            }
+        }
+        else{
+          badDistance +=1
+          //return 0;
+        }
     }
 
-    const safeDistanceData = checkDistanceCondition(report);
-    console.log("safeDistanceData");
-    console.log(safeDistanceData);
-    let firstElRemoved = false;
+    console.log('PARAMETERS AT THE END')
+    console.log('badSorting')
+    console.log(badSorting)
+    console.log('badDistance')
+    console.log(badDistance)
 
-    if (safeDistanceData.safeDistance) {
-      myResArr.push(report);
-      safeCount += 1;
-    } else if (
-      !safeDistanceData.safeDistance &&
-      safeDistanceData.conditionBufor.length === 1
-    ) {
-      const reportWithoutBadElement = report
-        .split(" ")
-        .filter((el) => {
-          if (el === safeDistanceData.conditionBufor[0] && !firstElRemoved) {
-            firstElRemoved = true;
-            return false;
-          }
-          return true;
-        })
-        .join(" ");
-
-      console.log("reportWithoutBadElement");
-      console.log(reportWithoutBadElement);
-      const newSafeDistanceData = checkDistanceCondition(
-        reportWithoutBadElement
-      );
-      if (newSafeDistanceData.safeDistance && singleBadLevel === 0) {
-        myResArr.push(report);
-        safeCount += 1;
-      } else {
-        //case gdzie - mamy bad level, bo posortowane różni się od nieposortowanego
-        console.log("else");
-        console.log(report);
+    if(badSorting > 1 || badDistance > 1 || (badSorting > 0 && badDistance >0)){
+      console.log('JESTEM W WARUNKU')
+      areConditionsFullfilled=false
+      return
+    }
+    else {
+      console.log('JESTEM W ELSE')
+      console.log(areConditionsFullfilled)
+      if(areConditionsFullfilled){
+        safeCount += 1
       }
-    } else {
-      return;
+     
     }
-  });
+
+    
+   
+    // badDistance - jak 2 razy true to nie incrementuj, jak raz to tak
+    console.log('SAFE COUNT AT END')
+    console.log(safeCount)
+    return safeCount
+}
+
+function getSafeCount(reports){
+    let safeCountRes = 0;
+    let badSorting = 0;
+    let badDistance = 0;
+    let areConditionsFullfilled = true;
+
+    reports.trim().split('\n').forEach((report)=>{
+        console.log('***')
+        const result = verifyConditions(report, safeCountRes, badSorting, badDistance, areConditionsFullfilled)
+       
+        
+            // console.log('tu')
+            // console.log(result)
+            // safeCountRes = safeCountRes + 1
+            safeCountRes = result
+            console.log('SAFE COUNT RES')
+            console.log(safeCountRes)
+        
+        console.log('***')
+
+    })
+    return safeCountRes;
+}
+
+const safeCountResult = getSafeCount(data)
 
 console.log("SAFE COUNT");
-console.log(safeCount);
+console.log(safeCountResult);
 
 function verify(line, exclude_idx) {
   let nums = line
@@ -240,5 +397,5 @@ console.log(safe_count);
 
 const differenceArr = hisResArr.filter((line) => !myResArr.includes(line));
 
-console.log("differenceArr");
-console.log(differenceArr);
+// console.log("differenceArr");
+// console.log(differenceArr);
